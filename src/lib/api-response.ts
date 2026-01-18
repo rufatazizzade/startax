@@ -61,3 +61,9 @@ export function serverErrorResponse(
 ): NextResponse<ApiResponse> {
   return errorResponse(message, 500);
 }
+
+export function validationErrorResponse(
+  message: string = 'Validation error'
+): NextResponse<ApiResponse> {
+  return errorResponse(message, 422);
+}
