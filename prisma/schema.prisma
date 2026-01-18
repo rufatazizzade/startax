@@ -1,0 +1,201 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// User model for authentication and basic user info
+model User {
+  id            String        @id @default(cuid())
+  email         String        @unique
+  passwordHash  String?       @map("password_hash")
+  firstName     String?       @map("first_name")
+  lastName      String?       @map("last_name")
+  role          UserRole      @default(USER)
+  isVerified    Boolean       @default(false) @map("is_verified")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+  
+  // Relations
+  profile       UserProfile?
+  chatMessages  ChatMessage[]
+  subscriptions Subscription[]
+  auditLogs     AuditLog[]
+  accounts      Account[]
+  sessions      Session[]
+
+  @@map("users")
+}
+
+// NextAuth Account model
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+// NextAuth Session model
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// NextAuth Verification Token model
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// User profile with business information
+model UserProfile {
+  id                   String    @id @default(cuid())
+  userId               String    @unique @map("user_id")
+  country              String?
+  businessType         String?   @map("business_type")
+  monthlyRevenueRange  String?   @map("monthly_revenue_range")
+  currency             String?   @default("USD")
+  numEmployees         Int?      @map("num_employees")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+// Chat messages for AI conversations
+model ChatMessage {
+  id        String      @id @default(cuid())
+  userId    String      @map("user_id")
+  content   String      @db.Text
+  role      MessageRole
+  createdAt DateTime    @default(now()) @map("created_at")
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("chat_messages")
+}
+
+// Tax rules database
+model TaxRule {
+  id           String   @id @default(cuid())
+  country      String
+  businessType String?  @map("business_type")
+  taxRate      Float    @map("tax_rate")
+  description  String   @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@index([country, businessType])
+  @@map("tax_rules")
+}
+
+// Tax deadlines for different countries
+model TaxDeadline {
+  id           String   @id @default(cuid())
+  country      String
+  deadlineName String   @map("deadline_name")
+  dueDate      DateTime @map("due_date")
+  description  String   @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@index([country, dueDate])
+  @@map("tax_deadlines")
+}
+
+// Subscription management
+model Subscription {
+  id               String           @id @default(cuid())
+  userId           String           @map("user_id")
+  planType         SubscriptionPlan @map("plan_type")
+  status           SubscriptionStatus
+  stripeCustomerId String?          @unique @map("stripe_customer_id")
+  stripeSubscriptionId String?      @unique @map("stripe_subscription_id")
+  createdAt        DateTime         @default(now()) @map("created_at")
+  expiresAt        DateTime?        @map("expires_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@map("subscriptions")
+}
+
+// Audit log for security and compliance
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String?  @map("user_id")
+  action      String
+  description String   @db.Text
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([action, createdAt])
+  @@map("audit_logs")
+}
+
+// Enums
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+enum SubscriptionPlan {
+  FREE
+  STARTER
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  CANCELLED
+  EXPIRED
+  TRIAL
+}
