@@ -22,11 +22,24 @@ export const registerSchema = z.object({
 });
 
 export const userProfileSchema = z.object({
-  country: z.string().optional(),
-  businessType: z.string().optional(),
-  monthlyRevenueRange: z.string().optional(),
-  currency: z.string().length(3).optional(),
-  numEmployees: z.number().int().positive().optional(),
+  country: z.enum(['DE', 'FR', 'IT', 'ES', 'GB', 'BE', 'NL', 'AT', 'PL', 'SE']),
+  businessType: z.enum(['SOLE_TRADER', 'LLC', 'FREELANCER', 'STARTUP', 'PARTNERSHIP']),
+  monthlyRevenueRange: z.enum(['0_5K', '5K_25K', '25K_100K', '100K_500K', '500K_PLUS']),
+  currency: z.enum(['EUR', 'GBP', 'SEK', 'PLN', 'ATS']),
+  numEmployees: z.number().int().nonnegative(),
+});
+
+export const forgotPasswordSchema = z.object({
+  email: emailSchema,
+});
+
+export const resetPasswordSchema = z.object({
+  token: z.string().min(1, 'Token is required'),
+  newPassword: passwordSchema,
+});
+
+export const verifyEmailSchema = z.object({
+  token: z.string().min(1, 'Token is required'),
 });
 
 export const chatMessageSchema = z.object({
