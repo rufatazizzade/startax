@@ -1,0 +1,10 @@
+export default function DashboardPage() {
+  return (
+    <div className="min-h-screen bg-secondary-50 p-8">
+      <div className="mx-auto max-w-7xl">
+        <h1 className="mb-6 text-4xl font-bold text-secondary-900">Dashboard</h1>
+        <p className="text-secondary-600">Dashboard page - To be implemented in Phase 2</p>
+      </div>
+    </div>
+  );
+}
