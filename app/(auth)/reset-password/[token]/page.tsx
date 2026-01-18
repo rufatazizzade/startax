@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { AuthForm, PasswordInput, Button, ErrorAlert } from '@/src/components';
 
@@ -38,7 +38,7 @@ export default function ResetPasswordPage() {
         const data = await response.json();
         setError(data.error || 'Something went wrong');
       }
-    } catch (err) {
+    } catch (_err) {
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);

@@ -1,6 +1,6 @@
 import { logger } from '@/src/lib/logger';
 
-const EMAIL_FROM = process.env.EMAIL_FROM_ADDRESS || 'noreply@startax.com';
+// const EMAIL_FROM = process.env.EMAIL_FROM_ADDRESS || 'noreply@startax.com';
 const APP_URL = process.env.APP_URL || 'http://localhost:3000';
 
 export async function sendEmail({
@@ -14,34 +14,8 @@ export async function sendEmail({
 }) {
   // In a real app, you would use Resend, SendGrid, etc.
   // For now, we log it and simulate success
-  logger.info(`Sending email to ${to} with subject "${subject}"`);
-
-  if (process.env.NODE_ENV === 'development') {
-    console.log('--- EMAIL SENT ---');
-    console.log(`To: ${to}`);
-    console.log(`Subject: ${subject}`);
-    // console.log(`Body: ${html}`);
-    console.log('------------------');
-  }
-
-  // Implementation with fetch (example for Resend)
-  /*
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
-    },
-    body: JSON.stringify({
-      from: EMAIL_FROM,
-      to,
-      subject,
-      html,
-    }),
-  });
-  return response.ok;
-  */
-
+  logger.info(`Sending email to ${to} with subject "${subject}"`, { html: html.substring(0, 100) + '...' });
+  
   return true;
 }
 

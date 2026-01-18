@@ -40,7 +40,7 @@ export async function middleware(request: NextRequest) {
     try {
       const { payload: decoded } = await jose.jwtVerify(token, JWT_SECRET);
       payload = decoded;
-    } catch (error) {
+    } catch (_error) {
       // Token invalid or expired
     }
   }

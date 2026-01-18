@@ -51,7 +51,7 @@ function LoginForm() {
       } else {
         setError(data.error || 'Invalid email or password');
       }
-    } catch (err) {
+    } catch (_err) {
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);

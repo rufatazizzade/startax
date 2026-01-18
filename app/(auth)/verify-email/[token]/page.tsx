@@ -28,7 +28,7 @@ export default function TokenVerifyPage() {
           setStatus('error');
           setMessage(data.error || 'Invalid or expired verification link.');
         }
-      } catch (err) {
+      } catch (_err) {
         setStatus('error');
         setMessage('An error occurred. Please try again.');
       }

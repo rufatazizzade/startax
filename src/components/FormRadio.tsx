@@ -16,7 +16,7 @@ interface FormRadioProps {
 
 export const FormRadio: React.FC<FormRadioProps> = ({
   label,
-  name,
+  name: _name,
   options,
   value,
   onChange,

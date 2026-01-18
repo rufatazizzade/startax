@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { prisma } from '@/src/lib/db';
 import { successResponse, errorResponse } from '@/src/lib/api-response';
 
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
     });
 
     return successResponse(null, 'Email verified successfully');
-  } catch (error: any) {
-    return errorResponse(error.message || 'Internal server error');
+  } catch (error) {
+    return errorResponse(error instanceof Error ? error.message : 'Internal server error');
   }
 }

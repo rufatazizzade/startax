@@ -102,22 +102,22 @@ export default function OnboardingPage() {
       });
 
       if (response.ok) {
-        await refreshUser();
-        router.push('/dashboard');
+      await refreshUser();
+      router.push('/dashboard');
       } else {
-        const data = await response.json();
-        setError(data.error || 'Failed to complete onboarding');
+      const data = await response.json();
+      setError(data.error || 'Failed to complete onboarding');
       }
-    } catch (err) {
+      } catch (_err) {
       setError('An error occurred. Please try again.');
-    } finally {
+      } finally {
       setLoading(false);
-    }
-  };
+      }
+      };
 
   return (
     <AuthForm
-      title="Let's set up your profile"
+      title="Let&apos;s set up your profile"
       subtitle="This helps us tailor Startax to your business needs."
     >
       <div className="space-y-8">

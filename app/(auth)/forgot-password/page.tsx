@@ -28,7 +28,7 @@ export default function ForgotPasswordPage() {
         const data = await response.json();
         setError(data.error || 'Something went wrong');
       }
-    } catch (err) {
+    } catch (_err) {
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
@@ -53,7 +53,7 @@ export default function ForgotPasswordPage() {
   return (
     <AuthForm
       title="Reset your password"
-      subtitle="Enter your email and we'll send you a link to reset your password."
+      subtitle="Enter your email and we&apos;ll send you a link to reset your password."
     >
       <form className="space-y-6" onSubmit={handleSubmit}>
         <Input
